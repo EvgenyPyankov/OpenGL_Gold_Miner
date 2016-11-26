@@ -20,6 +20,7 @@ Hook::Hook(double x, double y, double z)
 	direction = 1;
 	hookState = Aiming;
 	mineral = Void;
+	color= new GLfloat[3]{0.7f,1,0.7f };
 }
 
 double Hook::getX()
@@ -42,9 +43,9 @@ double Hook::getRadius()
 	return RADIUS;
 }
 
-COLORREF Hook::getColor()
+GLfloat* Hook::getColor()
 {
-	return COLOR;
+	return color;
 }
 
 

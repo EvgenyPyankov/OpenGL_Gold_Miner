@@ -57,11 +57,11 @@ void init(void)
 	
 	GLUquadricObj *quadObj;
 	GLfloat front_color[] = { 0,1,0,1 };
-	GLfloat back_color[] = { 0,0,1,1 };
+	//GLfloat back_color[] = { 0,0,1,1 };
 	quadObj = gluNewQuadric();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
-	glMaterialfv(GL_BACK, GL_DIFFUSE, back_color);
+	//glMaterialfv(GL_BACK, GL_DIFFUSE, back_color);
 	/*glPushMatrix();
 	glRotated(110, -1, 1, 0);
 	gluCylinder(quadObj, 1, 0.5, 2, 10, 10);
@@ -281,17 +281,6 @@ void keyPressed(int key, int x, int y)
 
 void drawInfo(int timeLeft, int score)
 {
-	//glLoadIdentity();
-	//int x0 = Converter::getX(0.01);
-	//int y0 = Converter::getY(0.01);
-	//string s = to_string(timeLeft);
-	//wchar_t  buffer[100];
-	//wsprintf(buffer, TEXT("Time left: %d"), timeLeft);
-	//TextOut(hdc, x0, y0, buffer, lstrlen(buffer));
-	//x0 = Converter::getX(0.01);
-	//y0 = Converter::getY(0.05);
-	//wsprintf(buffer, TEXT("Score: %d"), score);
-	//TextOut(hdc, x0, y0, buffer, lstrlen(buffer));
 	drawText("Time left", timeLeft, -0.6, 0.5);
 	drawText("Score", score, -0.6, 0.4);
 }
@@ -301,9 +290,6 @@ void drawText(string key, int value, float x, float y)
 	glLoadIdentity();
 	glColor3d(1.0, 1.0, 1.0);
 	glTranslatef(x, y, -3);
-	//glLoadIdentity();    //Reset model-view matrix
-	//glPushMatrix();
-	//glTranslatef(0, 0, 0.0f);  //Translate to (xPos,yPos)
 	glRasterPos2d(x, y);
 	key = key + ": "+ to_string(value);
 	for (int n = 0; n<key.size(); ++n) {
@@ -315,6 +301,10 @@ void drawText(string key, int value, float x, float y)
 
 void drawHook(Hook hook)
 {
+
+	//GLfloat front_color[] = { 0,1,0,1 };
+
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, hook.getColor());
 	glLoadIdentity(); 
 
 	float x = Converter::getX(hook.getX());
@@ -327,7 +317,23 @@ void drawHook(Hook hook)
 
 void drawMineral(Mineral mineral)
 {
-	glLoadIdentity();                 // Reset the model-view matrix
+
+	GLfloat boulderColor[] = { 0.5,0.5,0.5 };
+	GLfloat goldColor[] = { 1,0.8,0.2 };
+	GLfloat diamondColor[] = { 0,1,0.5 };
+
+	const map<MineralTypes, GLfloat*>colors = {
+		{ Boulder,boulderColor },
+		{ Gold,goldColor },
+		{ SmallBoulder,boulderColor },
+		{ SmallGold,goldColor },
+		{ Diamond,diamondColor }
+	};
+
+
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, colors.at(mineral.getType()));
+
+	glLoadIdentity();                 
 
 	float x = Converter::getX(mineral.getX());
 	float y = Converter::getY(mineral.getY());
@@ -434,8 +440,12 @@ int main(int argc, char** argv)
 
 
 	GLfloat mat_specular[] = { 1,1,1,1 };
-	float pos[4] = { 3,3,3,1 };
-	float dir[3] = { -1,-1,-1 };
+	//float pos[4] = { 3,3,3,1 };
+	//float pos[4] = { -1,1,1,1 };
+	float pos[4] = { 1,-1,1,1 };
+	//float dir[3] = { -1,-1,-1 };
+	//float dir[3] = { 0,0,0 };
+	float dir[3] = { -1,1,-3 };
 
 
 	glEnable(GL_DEPTH_TEST);

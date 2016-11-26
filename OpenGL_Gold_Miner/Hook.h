@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Constants.h"
+#include <GL/gl.h>
 
 using namespace Constants;
 
@@ -17,12 +18,13 @@ public:
 	HookStates getHookState();
 	void pullHook();
 	void grabMineral(MineralTypes mineral);
-	COLORREF getColor();
+	GLfloat* getColor();
 
 
 private:
 	int direction;
-	COLORREF COLOR = RGB(255, 255, 255);
+	//COLORREF COLOR = RGB(255, 255, 255);
+	GLfloat * color;
 	double ANGLE_STEP = 2.5;
 	int DEFAULT_ANGLE = 300;
 	int MIN_ANGLE = 190;

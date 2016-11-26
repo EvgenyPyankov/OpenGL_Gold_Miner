@@ -36,7 +36,7 @@ namespace Constants {
 	const int WIDTH = 500;
 	const int HEIGHT = 500;
 
-	const int LEVEL_TIME = 3;
+	const int LEVEL_TIME = 30;
 
 	const double PI = 3.14159265;
 
@@ -65,14 +65,16 @@ namespace Constants {
 		{ Void, 0.03 }
 	};
 
-	const map<MineralTypes, COLORREF>colors = {
-		{ Boulder, RGB(128,128,128) },
-		{ Gold, RGB(255, 204, 38) },
-		{ SmallBoulder, RGB(128,128,128) },
-		{ SmallGold, RGB(255, 204, 38) },
-		{ Diamond, RGB(0, 255, 128) },
-		{ Void, RGB(0, 0, 255) }
-	};
+	//const map<MineralTypes, GLfloat[]>colors = {
+	//	{ Boulder, { 1,0,0,1 } },
+	//	{ Gold, RGB(255, 204, 38) },
+	//	{ SmallBoulder, RGB(128,128,128) },
+	//	{ SmallGold, RGB(255, 204, 38) },
+	//	{ Diamond, RGB(0, 255, 128) },
+	//	{ Void, RGB(0, 0, 255) }
+	//};
+
+
 
 	const COLORREF BCKGRND_COLOR = RGB(76, 153, 0);
 
