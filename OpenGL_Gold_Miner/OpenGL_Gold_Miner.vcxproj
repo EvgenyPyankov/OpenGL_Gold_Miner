@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Converter.cpp" />
+    <ClCompile Include="Hook.cpp" />
     <ClCompile Include="LevelGenerator.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mineral.cpp" />
@@ -156,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Converter.h" />
+    <ClInclude Include="Hook.h" />
     <ClInclude Include="LevelGenerator.h" />
     <ClInclude Include="Mineral.h" />
   </ItemGroup>
