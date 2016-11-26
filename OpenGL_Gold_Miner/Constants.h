@@ -33,7 +33,7 @@ namespace Constants {
 		Backward
 	};
 
-	const int WIDTH = 800;
+	const int WIDTH = 500;
 	const int HEIGHT = 500;
 
 	const int LEVEL_TIME = 30;

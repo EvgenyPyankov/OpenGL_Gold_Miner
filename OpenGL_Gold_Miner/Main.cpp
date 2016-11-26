@@ -4,17 +4,22 @@
 #include "Constants.h"
 #include "Converter.h"
 #include "Hook.h"
+#include <string>
 
+using namespace std;
 
 void keyPressed(int key, int x, int y);
 void drawHook(Hook hook);
 void drawMineral(Mineral mineral);
 void drawInfo(int timeLeft, int score);
 void renderTimer(int value);
+void finishLevel();
 void levelTimer(int value);
 void hookTimer(int value);
 void processHookTimer();
+void processLevelTimer();
 int detectCollision();
+void drawText(string key, int value, float x, float y);
 
 vector<Mineral> minerals;
 Levels currentLevel;
@@ -44,19 +49,19 @@ void initGame()
 
 void init(void)
 {
-	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat mat_shininess[] = { 50.0 };
-	GLfloat light_position[] = { 0, 1, 1, 0.0 };
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glShadeModel(GL_SMOOTH);
+	//GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	//GLfloat mat_shininess[] = { 50.0 };
+	//GLfloat light_position[] = { 0, 1, 1, 0.0 };
+	//glClearColor(0.0, 0.0, 0.0, 0.0);
+	//glShadeModel(GL_SMOOTH);
 
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	//glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	//glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+	//glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHT0);
+	//glEnable(GL_DEPTH_TEST);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
 	glClearDepth(1.0f);                   // Set background depth to farthest
@@ -177,6 +182,17 @@ void display(void)
 	//glColor3f(0.0f, 1.0f, 0.0f);       // Green
 	//glVertex3f(-1.0f, -1.0f, 1.0f);
 	//glEnd();   // Done drawing the pyramid
+	glLoadIdentity();
+	glColor3f(1.0, 1.0, 1.0);
+	glBegin(GL_LINES);
+	/*glVertex3d(0, 1, -5);
+	glVertex3d(0, -1, -5);*/
+	float x = Converter::getX(hook.getX());
+	float y = Converter::getY(hook.getY());
+	//float z = Converter::getZ(hook.getZ());
+	glVertex3d(0, 1, -3);
+	glVertex3d(x, y, -3);
+	glEnd();
 
 			   for (Mineral mineral:minerals)
 			   {
@@ -184,7 +200,15 @@ void display(void)
 			   	
 			   }
 			   drawHook(hook);
+	/*		   glColor3d(1.0, 0.0, 0.0);
+			   glRasterPos2d(0.1, 0.1);
+			   string s = "hello";
+			   for (int n = 0; n<s.size(); ++n) {
+				   glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, s[n]);
+			   }*/
+			  // glutStrokeCharacter(GLUT_STROKE_ROMAN, 'a');
 
+			   drawInfo(timeLeft, score);
 	glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
 	//processHookTimer();
 }
@@ -237,8 +261,10 @@ void keyPressed(int key, int x, int y)
 
 void drawInfo(int timeLeft, int score)
 {
+	//glLoadIdentity();
 	//int x0 = Converter::getX(0.01);
 	//int y0 = Converter::getY(0.01);
+	//string s = to_string(timeLeft);
 	//wchar_t  buffer[100];
 	//wsprintf(buffer, TEXT("Time left: %d"), timeLeft);
 	//TextOut(hdc, x0, y0, buffer, lstrlen(buffer));
@@ -246,7 +272,26 @@ void drawInfo(int timeLeft, int score)
 	//y0 = Converter::getY(0.05);
 	//wsprintf(buffer, TEXT("Score: %d"), score);
 	//TextOut(hdc, x0, y0, buffer, lstrlen(buffer));
+	drawText("Time left", timeLeft, -0.6, 0.5);
+	drawText("Score", score, -0.6, 0.4);
 }
+
+void drawText(string key, int value, float x, float y)
+{
+	glLoadIdentity();
+	glColor3d(1.0, 1.0, 1.0);
+	glTranslatef(x, y, -3);
+	//glLoadIdentity();    //Reset model-view matrix
+	//glPushMatrix();
+	//glTranslatef(0, 0, 0.0f);  //Translate to (xPos,yPos)
+	glRasterPos2d(x, y);
+	key = key + ": "+ to_string(value);
+	for (int n = 0; n<key.size(); ++n) {
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, key[n]);
+	}
+
+}
+
 
 void drawHook(Hook hook)
 {
@@ -272,6 +317,7 @@ void drawMineral(Mineral mineral)
 	glutSolidSphere(1, 30, 16);
 	glFlush();*/
 	glTranslatef(x, y, -3);
+	glColor3f(1.0, 0.0, 0.0);
 	glutSolidSphere(radius, 30, 16);
 }
 
@@ -283,11 +329,25 @@ void hookTimer(int value) {
 
 void levelTimer(int value) {
 	//glutPostRedisplay();    // Post a paint request to activate display()
+	processLevelTimer();
 	glutTimerFunc(1000, levelTimer, 0); // subsequent timer call at milliseconds
 }
 void renderTimer(int value) {
 	glutPostRedisplay();    // Post a paint request to activate display()
 	glutTimerFunc(30, renderTimer, 0); // subsequent timer call at milliseconds
+}
+
+void finishLevel()
+{
+	
+}
+
+void processLevelTimer()
+{
+	if (timeLeft == 0)
+		finishLevel();
+	else
+		timeLeft--;
 }
 
 void processHookTimer()
