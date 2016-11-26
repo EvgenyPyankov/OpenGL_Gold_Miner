@@ -8,9 +8,10 @@ class Hook
 {
 public:
 	Hook();
-	Hook(double x, double y);
+	Hook(double x, double y, double z);
 	double getX();
 	double getY();
+	double getZ();
 	double getRadius();
 	void calculatePosition();
 	HookStates getHookState();
@@ -31,8 +32,10 @@ private:
 	double LENGTH = 0.05;
 	double x0;
 	double y0;
+	double z0;
 	double x;
 	double y;
+	double z;
 	double angle;
 	HookStates hookState;
 	void calculate(double c);

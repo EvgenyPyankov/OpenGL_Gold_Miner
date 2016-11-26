@@ -8,12 +8,14 @@ using namespace std;
 
 Hook::Hook() {}
 
-Hook::Hook(double x, double y)
+Hook::Hook(double x, double y, double z)
 {
 	this->x0 = x;
 	this->x = x;
 	this->y = y + LENGTH;
 	this->y0 = y;
+	this->z = z;
+	this->z0 = z;
 	this->angle = DEFAULT_ANGLE;
 	direction = 1;
 	hookState = Aiming;
@@ -28,6 +30,11 @@ double Hook::getX()
 double Hook::getY()
 {
 	return y;
+}
+
+double Hook::getZ()
+{
+	return z;
 }
 
 double Hook::getRadius()

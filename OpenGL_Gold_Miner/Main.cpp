@@ -3,14 +3,43 @@
 #include "LevelGenerator.h"
 #include "Constants.h"
 #include "Converter.h"
+#include "Hook.h"
+
+
+void keyPressed(int key, int x, int y);
+void drawHook(Hook hook);
+void drawMineral(Mineral mineral);
+void drawInfo(int timeLeft, int score);
+void renderTimer(int value);
+void levelTimer(int value);
+void hookTimer(int value);
+void processHookTimer();
+int detectCollision();
 
 vector<Mineral> minerals;
 Levels currentLevel;
+Hook hook;
+int mineral;
+int timeLeft;
+int score;
+int maxScore;
+
 
 void initGame()
 {
 	currentLevel = One;
 	minerals = LevelGenerator::getMinerals(currentLevel);
+	hook = Hook(0.5, 0.0, 0.5);
+	mineral = -1;
+	timeLeft = LEVEL_TIME;
+	score = 0;
+	maxScore = 0;
+
+	for (Mineral mineral : minerals)
+	{
+		maxScore += mineralValues.at(mineral.getType());
+	}
+
 }
 
 void init(void)
@@ -151,21 +180,13 @@ void display(void)
 
 			   for (Mineral mineral:minerals)
 			   {
-				    glLoadIdentity();                 // Reset the model-view matrix
-					
-			   	float x = Converter::getX(mineral.getX());
-			   	float y = Converter::getY(mineral.getY());
-			   	float z = Converter::getZ(mineral.getZ());
-			   	float radius = Converter::getLength(mineral.getR());
-			   	/*glTranslatef(0, 0, 0);
-			   	glutSolidSphere(1, 30, 16);
-			   	glFlush();*/
-			   	glTranslatef(x, y, -3);
-			   	glutSolidSphere(radius, 30, 16);
+				   drawMineral(mineral);
 			   	
 			   }
+			   drawHook(hook);
 
 	glutSwapBuffers();  // Swap the front and back frame buffers (double buffering)
+	//processHookTimer();
 }
 
 
@@ -206,6 +227,107 @@ void reshape(int w, int h)
 	gluPerspective(45.0f, aspect, 0.1f, 100.0f);
 }
 
+void keyPressed(int key, int x, int y)
+{
+	switch (key)
+	{
+	case GLUT_KEY_DOWN: hook.pullHook(); break;
+	}
+}
+
+void drawInfo(int timeLeft, int score)
+{
+	//int x0 = Converter::getX(0.01);
+	//int y0 = Converter::getY(0.01);
+	//wchar_t  buffer[100];
+	//wsprintf(buffer, TEXT("Time left: %d"), timeLeft);
+	//TextOut(hdc, x0, y0, buffer, lstrlen(buffer));
+	//x0 = Converter::getX(0.01);
+	//y0 = Converter::getY(0.05);
+	//wsprintf(buffer, TEXT("Score: %d"), score);
+	//TextOut(hdc, x0, y0, buffer, lstrlen(buffer));
+}
+
+void drawHook(Hook hook)
+{
+	glLoadIdentity(); 
+
+	float x = Converter::getX(hook.getX());
+	float y = Converter::getY(hook.getY());
+	float z = Converter::getZ(hook.getZ());
+	float radius = Converter::getLength(hook.getRadius());
+	glTranslatef(x, y, -3);
+	glutSolidSphere(radius, 30, 16);
+}
+
+void drawMineral(Mineral mineral)
+{
+	glLoadIdentity();                 // Reset the model-view matrix
+
+	float x = Converter::getX(mineral.getX());
+	float y = Converter::getY(mineral.getY());
+	float z = Converter::getZ(mineral.getZ());
+	float radius = Converter::getLength(mineral.getR());
+	/*glTranslatef(0, 0, 0);
+	glutSolidSphere(1, 30, 16);
+	glFlush();*/
+	glTranslatef(x, y, -3);
+	glutSolidSphere(radius, 30, 16);
+}
+
+void hookTimer(int value) {
+	//glutPostRedisplay();    // Post a paint request to activate display()
+	processHookTimer();
+	glutTimerFunc(30, hookTimer, 0); // subsequent timer call at milliseconds
+}
+
+void levelTimer(int value) {
+	//glutPostRedisplay();    // Post a paint request to activate display()
+	glutTimerFunc(1000, levelTimer, 0); // subsequent timer call at milliseconds
+}
+void renderTimer(int value) {
+	glutPostRedisplay();    // Post a paint request to activate display()
+	glutTimerFunc(30, renderTimer, 0); // subsequent timer call at milliseconds
+}
+
+void processHookTimer()
+{
+	hook.calculatePosition();
+	if (mineral >= 0)
+	{
+		minerals[mineral].setX(hook.getX());
+		minerals[mineral].setY(hook.getY());
+		if (hook.getHookState() == Aiming) {
+			score += mineralValues.at(minerals[mineral].getType());
+			minerals.erase(minerals.begin() + mineral);
+			mineral = -1;
+		}
+
+	}
+	else
+	{
+		mineral = detectCollision();
+		if (mineral >= 0) {
+			hook.grabMineral(minerals[mineral].getType());
+		}
+	}
+}
+
+int detectCollision()
+{
+	double xHook = hook.getX();
+	double yHook = hook.getY();
+	for (int i = 0; i<minerals.size(); i++)
+	{
+		double x = xHook - minerals[i].getX();
+		double y = yHook - minerals[i].getY();
+		if ((x*x + y*y) < minerals[i].getR()*minerals[i].getR()) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 int main(int argc, char** argv)
 {
 	initGame();
@@ -214,9 +336,14 @@ int main(int argc, char** argv)
 	glutInitWindowSize(WIDTH, HEIGHT);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow(argv[0]);
+
 	init();
+	glutTimerFunc(0, renderTimer, 0);
+	glutTimerFunc(0, hookTimer, 0);
+	glutTimerFunc(0, levelTimer, 0);
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
+	glutSpecialFunc(keyPressed);
 	glutMainLoop();
 	return 0;
 }
