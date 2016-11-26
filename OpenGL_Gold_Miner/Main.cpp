@@ -29,6 +29,7 @@ int mineral;
 int timeLeft;
 int score;
 int maxScore;
+float ambient[4] = { 0.5, 0.5, 0.5, 1 };
 
 
 void initGame()
@@ -50,6 +51,24 @@ void initGame()
 
 void init(void)
 {
+	glEnable(GL_LIGHTING);
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient);
+
+	
+	GLUquadricObj *quadObj;
+	GLfloat front_color[] = { 0,1,0,1 };
+	GLfloat back_color[] = { 0,0,1,1 };
+	quadObj = gluNewQuadric();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, front_color);
+	glMaterialfv(GL_BACK, GL_DIFFUSE, back_color);
+	/*glPushMatrix();
+	glRotated(110, -1, 1, 0);
+	gluCylinder(quadObj, 1, 0.5, 2, 10, 10);
+	glPopMatrix();*/
+	gluDeleteQuadric(quadObj);
+
+
 	//GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	//GLfloat mat_shininess[] = { 50.0 };
 	//GLfloat light_position[] = { 0, 1, 1, 0.0 };
@@ -411,6 +430,32 @@ int main(int argc, char** argv)
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow(argv[0]);
 
+
+
+
+	GLfloat mat_specular[] = { 1,1,1,1 };
+	float pos[4] = { 3,3,3,1 };
+	float dir[3] = { -1,-1,-1 };
+
+
+	glEnable(GL_DEPTH_TEST);
+
+	//  glEnable(GL_COLOR_MATERIAL);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, dir);
+
+
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialf(GL_FRONT, GL_SHININESS, 128.0);
+
+
+	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+
+
 	init();
 	glutTimerFunc(0, renderTimer, 0);
 	glutTimerFunc(0, hookTimer, 0);
@@ -418,6 +463,7 @@ int main(int argc, char** argv)
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutSpecialFunc(keyPressed);
+	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 	glutMainLoop();
 	return 0;
 }
