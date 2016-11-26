@@ -36,7 +36,7 @@ namespace Constants {
 	const int WIDTH = 500;
 	const int HEIGHT = 500;
 
-	const int LEVEL_TIME = 30;
+	const int LEVEL_TIME = 3;
 
 	const double PI = 3.14159265;
 

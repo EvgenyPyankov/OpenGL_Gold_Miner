@@ -20,6 +20,7 @@ void processHookTimer();
 void processLevelTimer();
 int detectCollision();
 void drawText(string key, int value, float x, float y);
+TCHAR * getGameResultText();
 
 vector<Mineral> minerals;
 Levels currentLevel;
@@ -337,9 +338,22 @@ void renderTimer(int value) {
 	glutTimerFunc(30, renderTimer, 0); // subsequent timer call at milliseconds
 }
 
+TCHAR * getGameResultText()
+{
+	double tmp = (double)score / maxScore;
+	if (tmp > 0.9)
+		return winMessage;
+	return loseMessage;
+}
+
 void finishLevel()
 {
-	
+	TCHAR *resultText = getGameResultText();
+	MessageBox(NULL,
+		resultText,
+		TEXT("Game over"),
+		NULL);
+	initGame();
 }
 
 void processLevelTimer()
