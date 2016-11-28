@@ -1,4 +1,3 @@
-
 #include "Hook.h"
 #include "Constants.h"
 #include <valarray>

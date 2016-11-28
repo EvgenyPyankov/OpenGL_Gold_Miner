@@ -23,7 +23,6 @@ public:
 
 private:
 	int direction;
-	//COLORREF COLOR = RGB(255, 255, 255);
 	GLfloat * color;
 	double ANGLE_STEP = 2.5;
 	int DEFAULT_ANGLE = 300;
@@ -44,4 +43,3 @@ private:
 	MineralTypes mineral;
 };
 
-#pragma once
